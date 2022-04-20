@@ -1,5 +1,36 @@
+# Bidding utility for helping in quick asynchronous bidding for
+# arbitrary N player games (with Gaia Project as a motivator)
+
+# == Program Inputs:
+# 1. "Factions" (names of 'seats' players are bidding for)
+# 2. "Reserve prices" for each player, decided by each player
+# privately and submitted simultaneously into this program. Players
+# can either use honor system to privately "lock in" their reserve prices
+# before sharing them, or use a trusted broker to manage everyone's reserve
+# prices and use them in this program.
+
+# == Explanation / example of "reserve price":
+# If a player has [0, 5, 10, 15] as their reserve prices
+# for ["Hads", "Terran", "Nevlas", "Geodens"], this means
+# that they would value Geodens as the best seat; they would, for example,
+# prefer Geodens over Nevlas unless Geodens cost 5 more points to play than Nevlas.
+# They would thus treat all the following choices as equal: Hads at 0, Terran at -5,
+# Nevlas at -10, and Geodens at -15.
+# Note that these preferences are important for pairwise comparisons.
+# Such a player, if presented with Geodens at 6 and everything else at 0,
+# would *not* prefer Geodens (despite Geodens being '15'), but would actually
+# prefer Nevlas -- Geodens are only 5 better than Nevlas.
+
+# Results:
+# Instructions for the seat assignment and handicap for each player.
+# The results are that no player is forced into an option that is worse
+# than their reserve prices.
+
+# The factions present in the game, in turn order.
 FACTIONS = ["Hads", "Terran", "Nevlas", "Geodens"]
 
+# "Reserve prices" for each player. Players are keys,
+# and players should be enumerated in their turn order.
 PLAYERS = {
   "A" : [0, 5, 10, 15],
   "B" : [0, 3, 9, 6],
