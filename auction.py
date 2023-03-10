@@ -27,31 +27,31 @@
 # than their reserve prices.
 
 # The factions present in the game, in turn order.
-FACTIONS = ["Hads", "Terran", "Nevlas", "Geodens"]
+FACTIONS = ["Lantids", "Hads", "Geodens", "Nevlas"]
 
 # "Reserve prices" for each player. Players are keys,
 # and players should be enumerated in their turn order.
 PLAYERS = {
-  "A" : [0, 5, 10, 15],
-  "B" : [0, 3, 9, 6],
-  "C" : [1, 1, 3, 0],
-  "D": [0, 3, 6, 10],
+  "Chris" : [0, 17, 16, 15],
+  "Rob" : [5, 19, 0, 35],
+  "Wendy" : [1, 0, 20, 15],
+  "Nate" : [0, 8, 5, 7],
 }
 
 def validate_inputs(factions, players):
   if len(factions) != len(players):
-    fail()
+    raise Exception("Number of factions must equal number of players, but %s != %s" % (len(factions), len(players)))
   for k in players:
     if len(factions) != len(players[k]):
-      fail()
+      raise Exception("Each player must list %s factions, but %s did not" % (len(factions), k))
     contains_zero = False
     for bid in players[k]:
       if bid < 0:
-        fail()
+        raise Exception("Illegal bid for %s, bids must not be negative" % k)
       if bid == 0:
         contains_zero = True
     if not contains_zero:
-      fail()
+      raise Exception("Illegal bids for %s, one bid must be zero" % k)
   pass
 
 # If it's player_index's turn to bid, with reserve as their
@@ -73,12 +73,12 @@ def best_bid(player_index, current_bids, reserve):
       (_, last_bid) = current_bids[i]
       potential_bid = last_bid + 1
     util_val = reserve[i] - potential_bid
-    if util_val > best_util:
+    if util_val > best_util or (util_val == best_util and potential_bid > best_bid):
       best_util = util_val
       best_bid = potential_bid
       best_choice = i
   if best_util < 0:
-    fail("Something went horribly wrong")
+    raise Exception("Something went horribly wrong")
   return (best_choice, best_bid)
 
 
@@ -100,7 +100,7 @@ def bidding_algorithm(factions, players):
     else:
       (prev_player, prev_bid) = current_bids[faction_index]
       if bid_score <= prev_bid:
-        fail("illegal bid")
+        raise Exception("Illegal bid")
       current_bids[faction_index] = (player_index, bid_score)
       players_to_go.append(prev_player)
   return current_bids
